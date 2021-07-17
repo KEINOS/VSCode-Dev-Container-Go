@@ -1,5 +1,25 @@
 ===============================================================================
- Installed go packages
+ OS Info
+===============================================================================
+PRETTY_NAME="Debian GNU/Linux 10 (buster)"
+NAME="Debian GNU/Linux"
+VERSION_ID="10"
+VERSION="10 (buster)"
+VERSION_CODENAME=buster
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+===============================================================================
+ Program Lang Info
+===============================================================================
+go version go1.16.5 linux/amd64
+Python 2.7.16
+Python 3.7.3
+node.js v14.17.3
+Perl version : 
+===============================================================================
+ Installed Go packages
 ===============================================================================
 ast-to-pattern
 dlv
@@ -24,7 +44,6 @@ staticcheck
 structlayout
 structlayout-optimize
 structlayout-pretty
-
 ===============================================================================
  Installed apt packages
 ===============================================================================
@@ -287,4 +306,3 @@ ii  zip                        3.0-11+b1                   amd64        Archiver
 ii  zlib1g:amd64               1:1.2.11.dfsg-1             amd64        compression library - runtime
 ii  zsh                        5.7.1-1                     amd64        shell with lots of features
 ii  zsh-common                 5.7.1-1                     all          architecture independent files for Zsh
-
