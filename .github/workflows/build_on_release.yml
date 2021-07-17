@@ -1,19 +1,16 @@
-name: Build on schedule/push
+name: Build on release
 
 on:
   workflow_dispatch:
-  push:
-    branches: ['main']
-  schedule:
-    # Run at AM 03:00 on every Monday
-    - cron:  '0 3 * * MON'
+  release:
+    types: [published]
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  automated_build:
+  release_build:
     runs-on: ubuntu-latest
 
     permissions:
@@ -65,11 +62,13 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'release'
         with:
           context: .
           push: true
           tags: |
-            ${{ steps.info.outputs.tag_latest }}
+            ${{ steps.info.outputs.tag_version }}
           build-args: |
             VERSION="${{ steps.info.outputs.ver_long }}"
             TAG_BUILD="(Build: ${{ steps.info.outputs.date }})"
+
