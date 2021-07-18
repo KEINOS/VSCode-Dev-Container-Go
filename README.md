@@ -1,3 +1,6 @@
+[![Build on schedule/push](https://github.com/KEINOS/VSCode-Dev-Container-Go/actions/workflows/build_weekly.yml/badge.svg)](https://github.com/KEINOS/VSCode-Dev-Container-Go/actions/workflows/build_weekly.yml)
+[![Snyk Container](https://github.com/KEINOS/VSCode-Dev-Container-Go/actions/workflows/snyk-container-analysis.yml/badge.svg)](https://github.com/KEINOS/VSCode-Dev-Container-Go/actions/workflows/snyk-container-analysis.yml)
+
 # VSCode-Dev-Container-Go
 
 VSCode の Remote-Containers で Golang 開発をするための Docker コンテナに使うベース・イメージです。（Go 1.16, Debian ベース）

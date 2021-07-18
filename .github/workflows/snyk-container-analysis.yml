@@ -1,22 +1,15 @@
-# A sample workflow which checks out the code, builds a container
-# image using Docker and scans that image for vulnerabilities using
-# Snyk. The results are then uploaded to GitHub Security Code Scanning
-#
-# For more examples, including how to limit scans to only high-severity
-# issues, monitor images for newly disclosed vulnerabilities in Snyk and
-# fail PR checks for new vulnerabilities, see https://github.com/snyk/actions/
+# Container analysis using Snyk.
+# This workflow checks out the code, builds a container image using Docker and
+# scans that image for vulnerabilities using Snyk.
 
-name: Snyk Container
+name: Container Analysis
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [ main ]
   schedule:
-    # Runs at 10:24 UTC on Wed
-    - cron: '24 10 * * 3'
+    # Run at AM 04:00 on every Monday
+    - cron:  '0 4 * * MON'
 
 jobs:
   snyk:
