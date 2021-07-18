@@ -17,7 +17,7 @@ go version go1.16.5 linux/amd64
 Python 2.7.16
 Python 3.7.3
 node.js v14.17.3
-Perl version : 
+Perl v5.28.1
 ===============================================================================
  Installed Go packages
 ===============================================================================
@@ -39,6 +39,8 @@ irdump
 keyify
 mockgen
 revive
+shellcheck
+shellspec
 shfmt
 staticcheck
 structlayout
