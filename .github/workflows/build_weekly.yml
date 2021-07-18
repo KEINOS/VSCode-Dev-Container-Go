@@ -1,4 +1,4 @@
-name: Build on schedule/push
+name: Weekly Build
 
 on:
   workflow_dispatch:
