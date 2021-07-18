@@ -39,9 +39,10 @@ ENV \
     GO111MODULE='on'
 
 RUN \
-    # Update/upgrade the package manager and install the base dependencies
+    # Update/upgrade the package manager
     apt-get update \
-    && apt-get install -y \
+    && apt-get upgrade -y \
+    #  install base dependencies
     && apt-get -y install --no-install-recommends \
     build-essential \
     # Install node.js for VSCode extensions' usage
@@ -66,6 +67,20 @@ RUN \
     && go install "github.com/go-delve/delve/cmd/dlv@latest" \
     && go install "honnef.co/go/tools/cmd/staticcheck@latest" \
     && go install "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" \
+    \
+    # Install shellcheck
+    && url_download="https://github.com/koalaman/shellcheck/releases/download/latest/shellcheck-latest.linux.$(uname -m).tar.xz" \
+    && timestamp="$(date +%Y%m%d%H%M%S)" \
+    && path_tmp_dir=$(mktemp "/tmp/QiiTask-${timestamp}.tmp.XXXXXX") \
+    && echo "TEMP PATH: ${path_tmp_dir}" \
+    && wget -P "${path_tmp_dir}/" "$url_download" \
+    && tar xvf "${path_tmp_dir}"/shellcheck* -C "${path_tmp_dir}/" \
+    && cp "${path_tmp_dir}/shellcheck-latest/shellcheck" "${GOPATH:?Undefined}/bin/shellcheck" \
+    && shellcheck --version \
+    && rm -r "$path_tmp_dir" \
+    \
+    # Install shellspec
+    && wget -O- https://git.io/shellspec | sh -s -- --prefix "${GOPATH:?Undefined}" --yes \
     \
     # Clean up
     && apt-get -y clean \
