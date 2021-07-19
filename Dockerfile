@@ -87,8 +87,7 @@ RUN \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/* /var/tmp/* \
     # Needed for go get to work (fix issue #6)
+    && echo '* changing dir owner: /go'
     && sudo chown -R vscode:root /go
 
 USER vscode
-
-RUN 
