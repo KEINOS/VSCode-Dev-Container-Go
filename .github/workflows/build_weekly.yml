@@ -5,9 +5,8 @@ on:
   push:
     branches: ['main']
   schedule:
-    # Run at UTC: 18:00 on every Sunday (JST: AM 03:00 on every Monday)
+    # Runs at 18:00 UTC on Sun (JST: AM 03:00 on every Monday)
     - cron: '0 18 * * SUN'
-    - cron: '30 * * * *'
 
 env:
   REGISTRY: ghcr.io
