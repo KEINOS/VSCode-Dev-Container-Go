@@ -85,4 +85,10 @@ RUN \
     # Clean up
     && apt-get -y clean \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /tmp/* /var/tmp/*
+    && rm -rf /tmp/* /var/tmp/* \
+    # Needed for go get to work (fix issue #6)
+    && sudo chown -R vscode:root /go
+
+USER vscode
+
+RUN 
