@@ -22,7 +22,7 @@ jobs:
       run: docker build -t keinos/vscode-dev-container-go-test .
 
     - name: Docker scan
-      run: docker scan keinos/vscode-dev-container-go-test
+      run: docker version && docker help
 
     - name: Run Snyk to check Docker image for vulnerabilities
       # Snyk can be used to break the build when it detects vulnerabilities.
