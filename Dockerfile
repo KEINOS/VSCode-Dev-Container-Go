@@ -1,28 +1,40 @@
 # =============================================================================
-#  Dockerfile for the Base Image of Go in VSCode Dec Containers
+#  Dev Container Base Image for Go in Alpine Linux
 # =============================================================================
-# -----------------------------------------------------------------------------
-#  Default Values
-# -----------------------------------------------------------------------------
-ARG INSTALL_NODE="true"
-ARG NODE_VERSION="lts/*"
-ARG LANG="ja_JP.UTF-8"
-ARG LC_ALL="ja_JP.UTF-8"
-ARG VARIANT="1"
+# Default
+ARG LANG='ja_JP.utf8'
+ARG LC_ALL='ja_JP.utf8'
+ARG LOCALE_ZONE="Japan"
+ARG USER_NAME="vscode"
+ARG USER_GROUP="vscode"
+ARG USER_UID=1000
+ARG USER_GID=1000
 ARG VERSION="dev"
 
-# =============================================================================
+# -----------------------------------------------------------------------------
 #  Main stage
-# =============================================================================
-# See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.185.0/containers/go/.devcontainer/base.Dockerfile
-FROM mcr.microsoft.com/vscode/devcontainers/go:0-${VARIANT}
+# -----------------------------------------------------------------------------
+FROM golang:alpine
 
-ARG INSTALL_NODE
-ARG NODE_VERSION
+# Args to receive during build
 ARG LANG
+ARG LANGUAGE="${LANGUAGE:-$LANG}"
 ARG LC_ALL
-ARG VERSION
+ARG LOCALE
+ARG LOCALE_ZONE
 ARG TAG_BUILD
+ARG USER_NAME
+ARG USER_GROUP
+ARG USER_UID
+ARG USER_GID
+ARG VERSION
+
+ENV \
+    # Locale
+    LANG="$LANG" \
+    LC_ALL="$LC_ALL" \
+    # Enforce go module mode
+    GO111MODULE='on'
 
 LABEL \
     Version="${VERSION}${TAG_BUILD}" \
@@ -30,64 +42,68 @@ LABEL \
     Url_repo="https://github.com/KEINOS/VSCode-Dev-Container-Go" \
     Maintainer="https://github.com/KEINOS"
 
-ENV \
-    DEBIAN_FRONTEND=noninteractive \
-    # Locale
-    LANG="$LANG" \
-    LC_ALL="$LC_ALL" \
-    # Enforce go module mode
-    GO111MODULE='on'
-
 RUN \
-    # Update/upgrade the package manager
-    apt-get update \
-    && apt-get upgrade -y \
-    #  install base dependencies
-    && apt-get -y install --no-install-recommends \
-    build-essential \
-    # Install node.js for VSCode extensions' usage
-    && if [ "${INSTALL_NODE}" = "true" ]; then su vscode -c "source /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi \
+    # Install additional OS packages.
+    apk add --no-cache --update \
+        alpine-sdk build-base \
+        tzdata \
+        xz \
+        bash \
+        curl \
+    && \
+    # Set time zone
+    echo 'Setting time zone' && \
+    cp "/usr/share/zoneinfo/${LOCALE_ZONE}" /etc/localtime && \
+    echo "$LOCALE_ZONE" >/etc/timezone && \
+    # Add user
+    # Alpine addgroup and adduser supports long options. See: https://stackoverflow.com/a/55757473/8367711
+    echo 'Adding work user' && \
+    addgroup \
+        --system \
+        --gid "$USER_GID" \
+        "$USER_GROUP" && \
     \
-    # Set locale
-    && echo "${LC_ALL} UTF-8" >>/etc/locale.gen \
-    && /usr/sbin/locale-gen "$LC_ALL" \
-    && /usr/sbin/update-locale LANG="$LANG" \
+    adduser \
+        --system \
+        --home "/home/${USER_NAME}" \
+        --shell /bin/bash \
+        --disabled-password \
+        --ingroup "$USER_GROUP" \
+        --uid "$USER_UID" \
+        "$USER_NAME" && \
     \
-    # Install useful Go tools
-    && go install "github.com/msoap/go-carpet@latest" \
-    && go install "mvdan.cc/sh/v3/cmd/shfmt@latest" \
-    && go install "github.com/tenntenn/goplayground/cmd/gp@latest" \
-    && go install "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" \
-    && go install "github.com/nicksnyder/go-i18n/v2/goi18n@latest" \
-    && go install "mvdan.cc/gofumpt@latest" \
-    && go install "golang.org/x/tools/gopls@latest" \
-    && go install "github.com/golang/mock/mockgen@latest" \
-    && go install "github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest" \
-    && go install "github.com/ramya-rao-a/go-outline@latest" \
-    && go install "github.com/go-delve/delve/cmd/dlv@latest" \
-    && go install "honnef.co/go/tools/cmd/staticcheck@latest" \
-    && go install "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" \
+    # Install go packages for dev
+    echo "Install Go tools to help dev" && \
+    go install "github.com/msoap/go-carpet@latest" && \
+    go install "mvdan.cc/sh/v3/cmd/shfmt@latest" && \
+    go install "github.com/tenntenn/goplayground/cmd/gp@latest" && \
+    go install "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
+    go install "github.com/nicksnyder/go-i18n/v2/goi18n@latest" && \
+    go install "mvdan.cc/gofumpt@latest" && \
+    go install "golang.org/x/tools/gopls@latest" && \
+    go install "github.com/golang/mock/mockgen@latest" && \
+    go install "github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest" && \
+    go install "github.com/ramya-rao-a/go-outline@latest" && \
+    go install "github.com/go-delve/delve/cmd/dlv@latest" && \
+    go install "honnef.co/go/tools/cmd/staticcheck@latest" && \
+    go install "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
+    go install "github.com/jessfraz/dockfmt@latest" && \
+    # Install ShellCheck - Static Analysis for Shell scripts
+    echo "Install shellcheck" && \
+    name_file_arch="shellcheck-latest.linux.$(uname -m).tar.xz" && \
+    url_download="https://github.com/koalaman/shellcheck/releases/download/latest/${name_file_arch}" && \
+    path_dir_tmp=$(mktemp -d) && \
+    path_file_arch="${path_dir_tmp}/${name_file_arch}" && \
+    wget -P "${path_dir_tmp}" "$url_download" && \
+    tar x -v -f "$path_file_arch" -C "$path_dir_tmp" && \
+    cp "${path_dir_tmp}/shellcheck-latest/shellcheck" "${GOPATH:?Undefined}/bin/shellcheck" && \
+    shellcheck --version && \
+    rm -rf "${path_dir_tmp:?Undefined}" && \
+    # Install ShellSpec - Unit test for Shell scripts
+    echo "Install shellspec" && \
+    wget -O- https://git.io/shellspec | sh -s -- --prefix "${GOPATH:?Undefined}" --yes && \
     \
-    # Install shellcheck
-    && url_download="https://github.com/koalaman/shellcheck/releases/download/latest/shellcheck-latest.linux.$(uname -m).tar.xz" \
-    && timestamp="$(date +%Y%m%d%H%M%S)" \
-    && path_tmp_dir=$(mktemp "/tmp/QiiTask-${timestamp}.tmp.XXXXXX") \
-    && echo "TEMP PATH: ${path_tmp_dir}" \
-    && wget -P "${path_tmp_dir}/" "$url_download" \
-    && tar xvf "${path_tmp_dir}"/shellcheck* -C "${path_tmp_dir}/" \
-    && cp "${path_tmp_dir}/shellcheck-latest/shellcheck" "${GOPATH:?Undefined}/bin/shellcheck" \
-    && shellcheck --version \
-    && rm -r "$path_tmp_dir" \
-    \
-    # Install shellspec
-    && wget -O- https://git.io/shellspec | sh -s -- --prefix "${GOPATH:?Undefined}" --yes \
-    \
-    # Clean up
-    && apt-get -y clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /tmp/* /var/tmp/* \
-    # Needed for go get to work (fix issue #6)
-    && echo '* changing dir owner: /go' \
-    && sudo chown -R vscode:root /go
+    # Change owner to vscode under /go
+    chown -R vscode:root /go
 
 USER vscode

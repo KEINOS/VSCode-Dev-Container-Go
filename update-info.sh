@@ -58,10 +58,6 @@ echo '==========================================================================
 echo ' Program Lang Info'
 echo '==============================================================================='
 go version
-python --version
-python3 --version
-printf "%s %s\n" "node.js" "$(node --version)"
-printf "%s %s\n" "Perl" "$(perl --version | head -n 3 | grep -o -E "(v[0-9]+\.){1}[0-9]+(\.[0-9]+)?" | head -n1)"
 
 echo '==============================================================================='
 echo ' Installed Go packages'
@@ -71,5 +67,5 @@ ls -1A "/go/bin"
 echo '==============================================================================='
 echo ' Installed apt packages'
 echo '==============================================================================='
-result="$(sudo dpkg -l)"
-echo "$result" | tail -n +4
+result="$(apk info 2>&1)"
+echo "$result" | grep -v WARNING | sort
