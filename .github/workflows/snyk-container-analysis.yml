@@ -16,13 +16,19 @@ jobs:
   snyk:
     runs-on: ubuntu-latest
     steps:
+    - name: Install Docker Scan
+      run: |
+        mkdir -p ~/.docker/cli-plugins && \
+        curl https://github.com/docker/scan-cli-plugin/releases/download/latest/docker-scan_linux_amd64 -L -s -S -o ~/.docker/cli-plugins/docker-scan &&\
+        chmod +x ~/.docker/cli-plugins/docker-scan
+
     - uses: actions/checkout@v2
 
     - name: Build a Docker image
       run: docker build -t keinos/vscode-dev-container-go-test .
 
     - name: Docker scan
-      run: docker version && docker help
+      run: docker scan keinos/vscode-dev-container-go-test
 
     - name: Run Snyk to check Docker image for vulnerabilities
       # Snyk can be used to break the build when it detects vulnerabilities.
