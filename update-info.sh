@@ -67,5 +67,5 @@ ls -1A "/go/bin"
 echo '==============================================================================='
 echo ' Installed apt packages'
 echo '==============================================================================='
-result="$(sudo dpkg -l)"
-echo "$result" | tail -n +4
+result="$(apk info 2>&1)"
+echo "$result" | grep -v WARNING | sort
