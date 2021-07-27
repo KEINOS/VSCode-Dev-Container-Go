@@ -36,6 +36,8 @@ ENV \
     # Enforce go module mode
     GO111MODULE='on'
 
+COPY embedded_sh/*.sh /etc/profile.d/
+
 LABEL \
     Version="${VERSION}${TAG_BUILD}" \
     Name="VSCode DevContainer - Go" \
@@ -45,50 +47,61 @@ LABEL \
 RUN \
     # Install additional OS packages.
     apk add --no-cache --update \
-        alpine-sdk build-base \
-        tzdata \
-        xz \
-        bash \
-        curl \
+    alpine-sdk build-base \
+    tzdata \
+    xz \
+    bash \
+    curl \
+    # add rg: issue #12
+    ripgrep \
+    # add jq: issue #13
+    jq \
+    # add tree: issue #14
+    tree \
     && \
     # Set time zone
     echo 'Setting time zone' && \
     cp "/usr/share/zoneinfo/${LOCALE_ZONE}" /etc/localtime && \
     echo "$LOCALE_ZONE" >/etc/timezone && \
+    \
     # Add user
     # Alpine addgroup and adduser supports long options. See: https://stackoverflow.com/a/55757473/8367711
     echo 'Adding work user' && \
     addgroup \
-        --system \
-        --gid "$USER_GID" \
-        "$USER_GROUP" && \
+    --system \
+    --gid "$USER_GID" \
+    "$USER_GROUP" && \
     \
     adduser \
-        --system \
-        --home "/home/${USER_NAME}" \
-        --shell /bin/bash \
-        --disabled-password \
-        --ingroup "$USER_GROUP" \
-        --uid "$USER_UID" \
-        "$USER_NAME" && \
+    --system \
+    --home "/home/${USER_NAME}" \
+    --shell /bin/bash \
+    --disabled-password \
+    --ingroup "$USER_GROUP" \
+    --uid "$USER_UID" \
+    "$USER_NAME" && \
     \
-    # Install go packages for dev
     echo "Install Go tools to help dev" && \
+    # Packages that Go team suggests to install
+    go install "github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest" && \
+    go install "github.com/ramya-rao-a/go-outline@latest" && \
+    go install "github.com/cweill/gotests/gotests@latest" && \
+    go install "github.com/fatih/gomodifytags@latest" && \
+    go install "github.com/josharian/impl@latest" && \
+    go install "github.com/haya14busa/goplay/cmd/goplay@latest" && \
+    go install "github.com/go-delve/delve/cmd/dlv@latest" && \
+    go install "honnef.co/go/tools/cmd/staticcheck@latest" && \
+    go install "golang.org/x/tools/gopls@latest" && \
+    # Packages that KEINOS commonly uses
     go install "github.com/msoap/go-carpet@latest" && \
     go install "mvdan.cc/sh/v3/cmd/shfmt@latest" && \
     go install "github.com/tenntenn/goplayground/cmd/gp@latest" && \
     go install "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
     go install "github.com/nicksnyder/go-i18n/v2/goi18n@latest" && \
     go install "mvdan.cc/gofumpt@latest" && \
-    go install "golang.org/x/tools/gopls@latest" && \
-    go install "github.com/golang/mock/mockgen@latest" && \
-    go install "github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest" && \
-    go install "github.com/ramya-rao-a/go-outline@latest" && \
-    go install "github.com/go-delve/delve/cmd/dlv@latest" && \
-    go install "honnef.co/go/tools/cmd/staticcheck@latest" && \
-    go install "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
     go install "github.com/jessfraz/dockfmt@latest" && \
-    # Install ShellCheck - Static Analysis for Shell scripts
+    \
+    # Install ShellCheck - Static Analysis for Shell scripts (Issue: #2)
     echo "Install shellcheck" && \
     name_file_arch="shellcheck-latest.linux.$(uname -m).tar.xz" && \
     url_download="https://github.com/koalaman/shellcheck/releases/download/latest/${name_file_arch}" && \
@@ -99,11 +112,21 @@ RUN \
     cp "${path_dir_tmp}/shellcheck-latest/shellcheck" "${GOPATH:?Undefined}/bin/shellcheck" && \
     shellcheck --version && \
     rm -rf "${path_dir_tmp:?Undefined}" && \
-    # Install ShellSpec - Unit test for Shell scripts
+    \
+    # Install ShellSpec - Unit test for Shell scripts (Issue: #2)
     echo "Install shellspec" && \
     wget -O- https://git.io/shellspec | sh -s -- --prefix "${GOPATH:?Undefined}" --yes && \
     \
-    # Change owner to vscode under /go
-    chown -R vscode:root /go
+    # Install latest golangci-lint - The fast Go linters runner (Issue: #11)
+    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$(go env GOPATH)/bin" && \
+    golangci-lint --version && \
+    \
+    # Set welcome message
+    cat '/etc/profile.d/welcome_msg.sh' >> /home/vscode/.bashrc && \
+    \
+    # Change owner to vscode under /go (Fix issue: #6)
+    chown -R vscode:root "$(go env GOPATH)/bin"
 
 USER vscode
+
+WORKDIR /workspaces
