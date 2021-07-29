@@ -36,7 +36,7 @@ ENV \
     # Enforce go module mode
     GO111MODULE='on'
 
-COPY embedded_sh/*.sh /etc/profile.d/
+COPY embedded_sh/*.sh /usr/local/bin/
 
 LABEL \
     Version="${VERSION}${TAG_BUILD}" \
@@ -45,20 +45,26 @@ LABEL \
     Maintainer="https://github.com/KEINOS"
 
 RUN \
+    # Upgrade installed packages
+    apk upgrade --no-cache --latest && \
     # Install additional OS packages.
-    apk add --no-cache --update \
-    alpine-sdk build-base \
-    tzdata \
-    xz \
-    bash \
-    curl \
-    # add rg: issue #12
-    ripgrep \
-    # add jq: issue #13
-    jq \
-    # add tree: issue #14
-    tree \
+    apk add --no-cache --latest \
+        alpine-sdk \
+        build-base \
+        tzdata \
+        xz \
+        bash \
+        curl \
+        # add rg: issue #12
+        ripgrep \
+        # add jq: issue #13
+        jq \
+        # add tree: issue #14
+        tree \
+        # add zip: issue #17
+        zip \
     && \
+    \
     # Set time zone
     echo 'Setting time zone' && \
     cp "/usr/share/zoneinfo/${LOCALE_ZONE}" /etc/localtime && \
@@ -122,7 +128,7 @@ RUN \
     golangci-lint --version && \
     \
     # Set welcome message
-    cat '/etc/profile.d/welcome_msg.sh' >> /home/vscode/.bashrc && \
+    cat '/usr/local/bin/welcome_msg.sh' >> /home/vscode/.bashrc && \
     \
     # Change owner to vscode under /go (Fix issue: #6)
     chown -R vscode:root "$(go env GOPATH)/bin"

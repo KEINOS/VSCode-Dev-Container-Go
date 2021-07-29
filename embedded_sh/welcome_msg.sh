@@ -2,7 +2,7 @@
 #  Welcome message
 # -----------------------------------------------------------------------------
 . /etc/os-release
-. /etc/profile.d/aliases.sh
+. /usr/local/bin/aliases.sh
 
 cat <<HEREDOC
 ===============================================================================
@@ -20,6 +20,7 @@ cat <<HEREDOC
   - golangci-lint ... Overall lint and static analysis for Go script
   - go-carpet ....... Runs and displays the missing coverage area
   - gomarkdoc ....... Generates markdown documentation from Go code
+  - build-app ....... Builds a static binary and ZIP archives under the bin directory in the repo
   - welcome ......... This message
   - list-go-pkg ..... List go installed packages
   - alias ........... Shows the list of shorthand commands of the above commands
