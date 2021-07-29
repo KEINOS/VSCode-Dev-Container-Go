@@ -96,6 +96,8 @@ ssl_client
 tar
 tree
 tzdata
+unzip
 xz
 xz-libs
+zip
 zlib
