@@ -13,15 +13,14 @@ on:
     - cron:  '0 4 * * MON'
 
 jobs:
-  snyk:
+  analysis:
     runs-on: ubuntu-latest
-
-    env:
-      # Dockle CIS-DI-0005: Enable Content trust for Docker
-      DOCKER_CONTENT_TRUST: 1
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Pull official base image with trust
+      run: DOCKER_CONTENT_TRUST=1 docker pull golang:alpine
 
     - name: Build a Docker image
       run: docker build -t keinos/vscode-dev-container-go-test .

@@ -15,11 +15,16 @@ ARG VERSION="dev"
 # -----------------------------------------------------------------------------
 FROM golang:alpine AS build
 
-ENV GO111MODULE='on'
+ENV \
+    GO111MODULE="on" \
+    GOPATH="${GOPATH:-/go}" \
+    GOBIN="${GOPATH}/bin"
 
 RUN \
     # Upgrade installed packages
     apk upgrade --no-cache --latest
+
+WORKDIR /root
 
 RUN \
     # Install additional OS packages.
@@ -29,22 +34,22 @@ RUN \
         xz \
     && \
     # Packages that Go team suggests to install
-    go install "github.com/ramya-rao-a/go-outline@latest" && \
-    go install "github.com/cweill/gotests/gotests@latest" && \
-    go install "github.com/fatih/gomodifytags@latest" && \
-    go install "github.com/josharian/impl@latest" && \
-    go install "github.com/haya14busa/goplay/cmd/goplay@latest" && \
-    go install "github.com/go-delve/delve/cmd/dlv@latest" && \
-    go install "honnef.co/go/tools/cmd/staticcheck@latest" && \
-    go install "golang.org/x/tools/gopls@latest" && \
+    go get -u "github.com/ramya-rao-a/go-outline@latest" && \
+    go get -u "github.com/cweill/gotests/gotests@latest" && \
+    go get -u "github.com/fatih/gomodifytags@latest" && \
+    go get -u "github.com/josharian/impl@latest" && \
+    go get -u "github.com/haya14busa/goplay/cmd/goplay@latest" && \
+    go get -u "github.com/go-delve/delve/cmd/dlv@latest" && \
+    go get -u "honnef.co/go/tools/cmd/staticcheck@latest" && \
+    go get -u "golang.org/x/tools/gopls@latest" && \
     # Packages that KEINOS commonly uses
-    go install "github.com/msoap/go-carpet@latest" && \
-    go install "mvdan.cc/sh/v3/cmd/shfmt@latest" && \
-    go install "github.com/tenntenn/goplayground/cmd/gp@latest" && \
-    go install "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
-    go install "github.com/nicksnyder/go-i18n/v2/goi18n@latest" && \
-    go install "mvdan.cc/gofumpt@latest" && \
-    go install "github.com/jessfraz/dockfmt@latest" && \
+    go get -u "github.com/msoap/go-carpet@latest" && \
+    go get -u "mvdan.cc/sh/v3/cmd/shfmt@latest" && \
+    go get -u "github.com/tenntenn/goplayground/cmd/gp@latest" && \
+    go get -u "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
+    go get -u "github.com/nicksnyder/go-i18n/v2/goi18n@latest" && \
+    go get -u "mvdan.cc/gofumpt@latest" && \
+    go get -u "github.com/jessfraz/dockfmt@latest" && \
     \
     # Install ShellCheck - Static Analysis for Shell scripts (Issue: #2)
     name_file_arch="shellcheck-latest.linux.$(uname -m).tar.xz" && \
@@ -83,7 +88,7 @@ ENV \
     LANG="$LANG" \
     LC_ALL="$LC_ALL" \
     # Enforce go module mode
-    GO111MODULE='on'
+    GO111MODULE="on"
 
 COPY embedded_sh/*.sh /usr/local/bin/
 COPY --from=build /go/bin /go/bin/
