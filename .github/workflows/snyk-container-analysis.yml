@@ -15,11 +15,23 @@ on:
 jobs:
   snyk:
     runs-on: ubuntu-latest
+
+    env:
+      # Dockle CIS-DI-0005: Enable Content trust for Docker
+      DOCKER_CONTENT_TRUST: 1
+
     steps:
     - uses: actions/checkout@v2
 
     - name: Build a Docker image
       run: docker build -t keinos/vscode-dev-container-go-test .
+
+    - name: Run Dockle to check Docker image lint
+      uses: hands-lab/dockle-action@v1
+      with:
+        image: keinos/vscode-dev-container-go-test
+        exit-code: '1'
+        exit-level: WARN
 
     - name: Run Snyk to check Docker image for vulnerabilities
       # Snyk can be used to break the build when it detects vulnerabilities.
