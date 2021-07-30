@@ -2,6 +2,7 @@
 #  Dev Container Base Image for Go in Alpine Linux
 # =============================================================================
 # Default
+ARG GOPATH="/go"
 ARG LANG='ja_JP.utf8'
 ARG LC_ALL='ja_JP.utf8'
 ARG LOCALE_ZONE="Japan"
@@ -10,10 +11,13 @@ ARG USER_GROUP="vscode"
 ARG USER_UID=1000
 ARG USER_GID=1000
 ARG VERSION="dev"
+
 # -----------------------------------------------------------------------------
 #  Build stage
 # -----------------------------------------------------------------------------
 FROM golang:alpine AS build
+
+ARG GOPATH
 
 ENV \
     GO111MODULE="on" \
@@ -31,26 +35,9 @@ RUN \
     apk add --no-cache --latest \
         alpine-sdk \
         build-base \
-        xz \
-    && \
-    # Packages that Go team suggests to install
-    go get -u "github.com/ramya-rao-a/go-outline@latest" && \
-    go get -u "github.com/cweill/gotests/gotests@latest" && \
-    go get -u "github.com/fatih/gomodifytags@latest" && \
-    go get -u "github.com/josharian/impl@latest" && \
-    go get -u "github.com/haya14busa/goplay/cmd/goplay@latest" && \
-    go get -u "github.com/go-delve/delve/cmd/dlv@latest" && \
-    go get -u "honnef.co/go/tools/cmd/staticcheck@latest" && \
-    go get -u "golang.org/x/tools/gopls@latest" && \
-    # Packages that KEINOS commonly uses
-    go get -u "github.com/msoap/go-carpet@latest" && \
-    go get -u "mvdan.cc/sh/v3/cmd/shfmt@latest" && \
-    go get -u "github.com/tenntenn/goplayground/cmd/gp@latest" && \
-    go get -u "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
-    go get -u "github.com/nicksnyder/go-i18n/v2/goi18n@latest" && \
-    go get -u "mvdan.cc/gofumpt@latest" && \
-    go get -u "github.com/jessfraz/dockfmt@latest" && \
-    \
+        xz
+
+RUN \
     # Install ShellCheck - Static Analysis for Shell scripts (Issue: #2)
     name_file_arch="shellcheck-latest.linux.$(uname -m).tar.xz" && \
     url_download="https://github.com/koalaman/shellcheck/releases/download/latest/${name_file_arch}" && \
@@ -65,12 +52,33 @@ RUN \
     # Install latest golangci-lint - The fast Go linters runner (Issue: #11)
     wget -O- https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "${GOPATH:?Undefined}/bin"
 
+RUN \
+    # Packages that Go team suggests to install
+    go get -u "github.com/ramya-rao-a/go-outline@latest" && \
+    go get -u "github.com/cweill/gotests/gotests@latest" && \
+    go get -u "github.com/fatih/gomodifytags@latest" && \
+    go get -u "github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest" && \
+    go get -u "github.com/josharian/impl@latest" && \
+    go get -u "github.com/haya14busa/goplay/cmd/goplay@latest" && \
+    go get -u "github.com/go-delve/delve/cmd/dlv@latest" && \
+    go get -u "honnef.co/go/tools/cmd/staticcheck@latest" && \
+    go get -u "golang.org/x/tools/gopls@latest" && \
+    # Packages that KEINOS commonly uses
+    go get -u "github.com/msoap/go-carpet@latest" && \
+    go get -u "mvdan.cc/sh/v3/cmd/shfmt@latest" && \
+    go get -u "github.com/tenntenn/goplayground/cmd/gp@latest" && \
+    go get -u "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
+    go get -u "github.com/nicksnyder/go-i18n/v2/goi18n@latest" && \
+    go get -u "mvdan.cc/gofumpt@latest" && \
+    go get -u "github.com/jessfraz/dockfmt@latest"
+
 # -----------------------------------------------------------------------------
 #  Main stage
 # -----------------------------------------------------------------------------
 FROM golang:alpine
 
 # Args to receive during build
+ARG GOPATH
 ARG LANG
 ARG LANGUAGE="${LANGUAGE:-$LANG}"
 ARG LC_ALL
@@ -88,7 +96,9 @@ ENV \
     LANG="$LANG" \
     LC_ALL="$LC_ALL" \
     # Enforce go module mode
-    GO111MODULE="on"
+    GO111MODULE="on" \
+    GOPATH="${GOPATH:-/go}" \
+    GOBIN="${GOPATH}/bin"
 
 COPY embedded_sh/*.sh /usr/local/bin/
 COPY --from=build /go/bin /go/bin/
@@ -101,9 +111,8 @@ LABEL \
 
 RUN \
     # Upgrade installed packages
-    apk upgrade --no-cache --latest
-
-RUN \
+    apk upgrade --no-cache --latest && \
+    \
     # Install additional OS packages
     apk add --no-cache --latest \
         alpine-sdk \
@@ -161,7 +170,28 @@ RUN \
     \
     # Fix CIS-DI-0008: Confirm safety of setuid/setgid files (Issue #19)
     chmod u-s /usr/bin/abuild-sudo && \
-    chmod u-g /usr/bin/abuild-sudo
+    chmod u-g /usr/bin/abuild-sudo && \
+    \
+    # Smoke tests for installed Go packages as a command
+    dlv version && \
+    dockfmt version && \
+    go-carpet --version && \
+    go-outline -help && \
+    gofumpt --version && \
+    goi18n extract --help && \
+    golangci-lint --version && \
+    gomarkdoc --version && \
+    gomodifytags -help && \
+    gopkgs -h && \
+    goplay -h 2>&1 | grep SYNOPSIS && \
+    gopls version && \
+    gotests -h && \
+    gp help && \
+    impl -h && \
+    shellcheck --version && \
+    shellspec --version && \
+    shfmt --version && \
+    staticcheck --version
 
 USER vscode
 
