@@ -21,6 +21,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Pull official base image with trust
+        run: DOCKER_CONTENT_TRUST=1 docker pull golang:alpine
+
       - name: Fetch tags unshallow and prune
         run: git fetch --prune --unshallow --tags
 

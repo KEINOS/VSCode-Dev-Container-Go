@@ -16,6 +16,15 @@
 
 安定したバージョンの開発環境が必要な場合は `latest` 以外の[固定バージョン](https://github.com/KEINOS/VSCode-Dev-Container-Go/pkgs/container/vscode-dev-container-go/versions)を利用ください。
 
+## 脆弱性テスト
+
+`push` 時に、GitHub Actions にて以下の最低限のテストを行っています。
+
+- `docker scan`
+  - [Snyk Container Analysis](https://github.com/snyk/actions/tree/master/docker)
+- [Dockle](https://github.com/goodwithtech/dockle)
+  - 除外パターン: [.dockleignore](.dockleignore)
+
 ## 不具合報告
 
 - [Issues](https://github.com/KEINOS/VSCode-Dev-Container-Go/issues) にお願いします。
