@@ -62,7 +62,8 @@ RUN \
     go get -u "github.com/haya14busa/goplay/cmd/goplay@latest" && \
     go get -u "github.com/go-delve/delve/cmd/dlv@latest" && \
     go get -u "honnef.co/go/tools/cmd/staticcheck@latest" && \
-    go get -u "golang.org/x/tools/gopls@latest" && \
+    # Fix issue #22
+    go get "golang.org/x/tools/gopls@latest" && \
     # Packages that KEINOS commonly uses
     go get -u "github.com/msoap/go-carpet@latest" && \
     go get -u "mvdan.cc/sh/v3/cmd/shfmt@latest" && \
