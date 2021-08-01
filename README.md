@@ -19,9 +19,12 @@ VSCode の Remote-Containers で Golang 開発をするための Docker コン�
 - イメージの概要
   - Alpine ベース（ARM64/intel 互換向け）
   - Go 1.16
-  - 脆弱性チェック: `docker scan --severity=high` チェック済み（Snyk Container 含む）
   - Time Zone: Japan (UTC +9:00 = JST)
   - Locale: `ja_JP.utf8`
   - デフォルトユーザ: `vscode`:`vscode` (UID:GID=1000:1000)
   - インストール済みのパッケージ情報: [image_info.txt](image_info.txt)
   - [Dockerfile](https://github.com/KEINOS/VSCode-Dev-Container-Go/blob/main/Dockerfile)
+  - Container Analysis ([セキュリティ](SECURITY.md))
+    - [Snyk Container Analysis](https://github.com/snyk/actions/tree/master/docker)
+      - `docker scan --severity=high` チェック済み
+    - [Dockle](https://github.com/goodwithtech/dockle) ([.dockleignore](.dockleignore))
