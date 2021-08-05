@@ -20,7 +20,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Pull official base image with trust
-      run: DOCKER_CONTENT_TRUST=1 docker pull golang:alpine
+      run: docker pull golang:alpine
 
     - name: Build a Docker image
       run: docker build -t keinos/vscode-dev-container-go-test .
