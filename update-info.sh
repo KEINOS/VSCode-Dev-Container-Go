@@ -4,6 +4,7 @@
 #  このスクリプトはローカルで実行してください。
 # =============================================================================
 
+NAME_IMAGE_BASE='golang:latest'
 NAME_TAG_IMG='test:local'
 NAME_FILE_INFO='image_info.txt'
 PATH_FILE_INFO="./${NAME_FILE_INFO}"
@@ -16,13 +17,15 @@ PATH_FILE_SCRIPT='./update-info.sh'
 if [ ! -r "/.dockerenv" ]; then
     set -eu
 
+    docker pull "${NAME_IMAGE_BASE}"
+
     docker build -t "${NAME_TAG_IMG}" . || {
         echo >&2 "Error during building image"
 
         exit 1
     }
 
-    result=$(docker run --rm -v "$(pwd):/root" --user root --workdir /root "${NAME_TAG_IMG}" "${PATH_FILE_SCRIPT}" 2>&1) || {
+    result=$(docker run --rm -v "$(pwd):/root/mnt" --user root --workdir "/root/mnt" "${NAME_TAG_IMG}" "${PATH_FILE_SCRIPT}" 2>&1) || {
         echo >&2 "${result}"
         echo >&2 "Error during running image"
 
