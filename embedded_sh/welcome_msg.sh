@@ -20,8 +20,12 @@ cat <<HEREDOC
   - golangci-lint ... Overall lint and static analysis for Go script
   - go-carpet ....... Runs and displays the missing coverage area
   - gomarkdoc ....... Generates markdown documentation from Go code
-  - build-app ....... Builds a static binary and ZIP archives under the bin directory in the repo
-  - welcome ......... This message
-  - list-go-pkg ..... List go installed packages
-  - alias ........... Shows the list of shorthand commands of the above commands
+  - alias ........... Shows the list of aliases
+- Useful aliases
+  - build-app ........ Builds a static binary and ZIP archives under the bin directory in the repo
+  - list-go-pkg ...... List go installed packages
+  - run-shfmt ........ Runs shfmt with POSIX mode
+  - run-coverage ..... Runs go tests with coverage and shows the coverage report
+  - run-shellcheck ... Runs shellcheck with POSIX mode
+  - welcome .......... Show this message
 HEREDOC
