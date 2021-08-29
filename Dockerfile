@@ -63,14 +63,15 @@ RUN \
     go install "github.com/go-delve/delve/cmd/dlv@latest" && \
     go install "honnef.co/go/tools/cmd/staticcheck@latest" && \
     go install "golang.org/x/tools/gopls@latest" && \
+    go install "github.com/go-delve/delve/cmd/dlv@latest" && \
     # Packages that KEINOS commonly uses
-    go get -u "github.com/msoap/go-carpet@latest" && \
-    go get -u "mvdan.cc/sh/v3/cmd/shfmt@latest" && \
-    go get -u "github.com/tenntenn/goplayground/cmd/gp@latest" && \
-    go get -u "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
-    go get -u "github.com/nicksnyder/go-i18n/v2/goi18n@latest" && \
-    go get -u "mvdan.cc/gofumpt@latest" && \
-    go get -u "github.com/jessfraz/dockfmt@latest"
+    go install "github.com/msoap/go-carpet@latest" && \
+    go install "mvdan.cc/sh/v3/cmd/shfmt@latest" && \
+    go install "github.com/tenntenn/goplayground/cmd/gp@latest" && \
+    go install "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
+    go install "github.com/nicksnyder/go-i18n/v2/goi18n@latest" && \
+    go install "mvdan.cc/gofumpt@latest" && \
+    go install "github.com/jessfraz/dockfmt@latest"
 
 # -----------------------------------------------------------------------------
 #  Main stage
