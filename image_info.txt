@@ -3,17 +3,18 @@
 ===============================================================================
 NAME="Alpine Linux"
 ID=alpine
-VERSION_ID=3.14.1
+VERSION_ID=3.14.2
 PRETTY_NAME="Alpine Linux v3.14"
 HOME_URL="https://alpinelinux.org/"
 BUG_REPORT_URL="https://bugs.alpinelinux.org/"
 ===============================================================================
  Program Lang Info
 ===============================================================================
-go version go1.16.7 linux/amd64
+go version go1.17 linux/amd64
 ===============================================================================
  Installed Go packages
 ===============================================================================
+altshfmt
 dlv
 dockfmt
 go-carpet

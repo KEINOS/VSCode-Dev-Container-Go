@@ -63,14 +63,30 @@ RUN \
     go install "github.com/go-delve/delve/cmd/dlv@latest" && \
     go install "honnef.co/go/tools/cmd/staticcheck@latest" && \
     go install "golang.org/x/tools/gopls@latest" && \
+    go install "github.com/go-delve/delve/cmd/dlv@latest" && \
     # Packages that KEINOS commonly uses
-    go get -u "github.com/msoap/go-carpet@latest" && \
-    go get -u "mvdan.cc/sh/v3/cmd/shfmt@latest" && \
-    go get -u "github.com/tenntenn/goplayground/cmd/gp@latest" && \
-    go get -u "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
-    go get -u "github.com/nicksnyder/go-i18n/v2/goi18n@latest" && \
-    go get -u "mvdan.cc/gofumpt@latest" && \
-    go get -u "github.com/jessfraz/dockfmt@latest"
+    go install "github.com/msoap/go-carpet@latest" && \
+    go install "mvdan.cc/sh/v3/cmd/shfmt@v3.2.1" && \
+    go install "github.com/tenntenn/goplayground/cmd/gp@latest" && \
+    go install "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
+    go install "github.com/nicksnyder/go-i18n/v2/goi18n@latest" && \
+    go install "mvdan.cc/gofumpt@latest" && \
+    go install "github.com/jessfraz/dockfmt@latest"
+
+RUN \
+    # Install ShellSpec temporary.
+    wget -O- https://git.io/shellspec | sh -s -- --prefix "${GOPATH:?Undefined}" --yes && \
+    shellspec --version && \
+    # Clone altshfmt
+    cd /tmp && \
+    git clone https://github.com/shellspec/altshfmt.git && \
+    cd altshfmt && \
+    # Unit test altshfmt
+    shellspec && \
+    # Install altshfmt
+    cp /tmp/altshfmt/altshfmt /go/bin/altshfmt && \
+    # Remove shellspec. This will be re-installed in the main stage due to the dependency.
+    rm -f /go/bin/shellspec
 
 # -----------------------------------------------------------------------------
 #  Main stage
@@ -173,6 +189,7 @@ RUN \
     chmod u-g /usr/bin/abuild-sudo && \
     \
     # Smoke tests for installed Go packages as a command
+    altshfmt -h && \
     dlv version && \
     dockfmt version && \
     go-carpet --version && \
