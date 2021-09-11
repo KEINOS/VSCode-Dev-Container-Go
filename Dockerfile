@@ -188,6 +188,9 @@ RUN \
     chmod u-s /usr/bin/abuild-sudo && \
     chmod u-g /usr/bin/abuild-sudo && \
     \
+    # Fix DKL-LI-0003: Only put necessary files (Related issue #38)
+    rm -rf /usr/local/go/src/crypto/elliptic/internal/fiat/Dockerfile && \
+    \
     # Smoke tests for installed Go packages as a command
     altshfmt -h && \
     dlv version && \
