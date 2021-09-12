@@ -126,10 +126,16 @@ LABEL \
     Maintainer="https://github.com/KEINOS"
 
 RUN \
-    # Upgrade installed packages
+    # Upgrade installed packages with no cache
     apk upgrade --no-cache --latest && \
     \
     # Install additional OS packages
+    # Note:
+    #   We DO NOT ALLOW to install `sudo` here for two reasons:
+    #   1. `docker scan --severity=high` often reports vulnerability alerts for
+    #       new version of suto.
+    #   2. "go get" or "go install" is all we need. Otherwise place them in your
+    #      Dockerfile.
     apk add --no-cache --latest \
         alpine-sdk \
         build-base \
@@ -147,12 +153,12 @@ RUN \
         zip \
     && \
     \
-    # Set time zone
+    # Set time zone (to Tokyo by default)
     echo 'Setting time zone' && \
     cp "/usr/share/zoneinfo/${LOCALE_ZONE}" /etc/localtime && \
     echo "$LOCALE_ZONE" >/etc/timezone && \
     \
-    # Add user
+    # Add user for VSCode
     # Alpine addgroup and adduser supports long options. See: https://stackoverflow.com/a/55757473/8367711
     echo 'Adding work user' && \
     addgroup \

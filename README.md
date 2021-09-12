@@ -31,3 +31,4 @@ VSCode の Remote-Containers で Golang 開発をするための Docker コン�
     - [Snyk Container Analysis](https://github.com/snyk/actions/tree/master/docker)
       - `docker scan --severity=high` チェック済み
     - [Dockle](https://github.com/goodwithtech/dockle) ([.dockleignore](.dockleignore))
+    - [Trivy](https://github.com/aquasecurity/trivy)
