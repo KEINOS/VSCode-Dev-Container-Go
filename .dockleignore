@@ -8,3 +8,8 @@ DKL-DI-0006
 
 # Disable content trust for Docker during test but pull the base image with trust.
 CIS-DI-0005
+
+# Disable "Clear apt-get caches" fatal error since Alpine does not use `apt-get`
+# but `apk`. (See issue #38)
+DKL-DI-0005
+CIS-DI-0010

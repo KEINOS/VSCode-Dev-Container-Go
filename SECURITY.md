@@ -22,8 +22,10 @@
 
 - `docker scan`
   - [Snyk Container Analysis](https://github.com/snyk/actions/tree/master/docker)
-- [Dockle](https://github.com/goodwithtech/dockle)
-  - 除外パターン: [.dockleignore](.dockleignore)
+- [Azure Container Scan](https://github.com/Azure/container-scan)
+  - [Dockle](https://github.com/goodwithtech/dockle)
+    - 除外パターン: [.dockleignore](.dockleignore)
+  - [Trivy](https://github.com/aquasecurity/trivy)
 
 ## 不具合報告
 
