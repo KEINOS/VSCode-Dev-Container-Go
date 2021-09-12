@@ -21,7 +21,7 @@ VSCode の Remote-Containers で Golang 開発をするための Docker コン�
 
 - イメージの概要
   - Alpine ベース（ARM64/intel 互換向け）
-  - Go 1.17
+  - Go 1.17.[x](image_info.txt)
   - Time Zone: Japan (UTC +9:00 = JST)
   - Locale: `ja_JP.utf8`
   - デフォルトユーザ: `vscode`:`vscode` (UID:GID=1000:1000)
