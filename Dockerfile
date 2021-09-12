@@ -64,14 +64,15 @@ RUN \
     go install "honnef.co/go/tools/cmd/staticcheck@latest" && \
     go install "golang.org/x/tools/gopls@latest" && \
     go install "github.com/go-delve/delve/cmd/dlv@latest" && \
-    # Packages that KEINOS commonly uses
+    # Packages that KEINOS commonly use
     go install "github.com/msoap/go-carpet@latest" && \
     go install "mvdan.cc/sh/v3/cmd/shfmt@v3.2.1" && \
     go install "github.com/tenntenn/goplayground/cmd/gp@latest" && \
     go install "github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest" && \
     go install "github.com/nicksnyder/go-i18n/v2/goi18n@latest" && \
     go install "mvdan.cc/gofumpt@latest" && \
-    go install "github.com/jessfraz/dockfmt@latest"
+    go install "github.com/jessfraz/dockfmt@latest" && \
+    go install "golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest"
 
 RUN \
     # Install ShellSpec temporary.
@@ -217,7 +218,8 @@ RUN \
     shellcheck --version && \
     shellspec --version && \
     shfmt --version && \
-    staticcheck --version
+    staticcheck --version && \
+    fieldalignment -h
 
 USER vscode
 

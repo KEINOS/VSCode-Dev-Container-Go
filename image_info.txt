@@ -17,6 +17,7 @@ go version go1.17.1 linux/amd64
 altshfmt
 dlv
 dockfmt
+fieldalignment
 go-carpet
 go-outline
 gofumpt
