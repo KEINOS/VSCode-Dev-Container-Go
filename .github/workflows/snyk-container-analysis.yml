@@ -25,13 +25,6 @@ jobs:
     - name: Build a Docker image
       run: docker build -t keinos/vscode-dev-container-go-test .
 
-    - name: Run Dockle to check Docker image lint
-      uses: hands-lab/dockle-action@v1
-      with:
-        image: keinos/vscode-dev-container-go-test
-        exit-code: '1'
-        exit-level: WARN
-
     - name: Run Snyk to check Docker image for vulnerabilities
       # Snyk can be used to break the build when it detects vulnerabilities.
       # In this case we want to upload the issues to GitHub Code Scanning
@@ -46,7 +39,16 @@ jobs:
         image: keinos/vscode-dev-container-go-test
         args: --file=Dockerfile
 
-    - name: Upload result to GitHub Code Scanning
+    - name: Upload Snyk's scan result to GitHub Code Scanning
       uses: github/codeql-action/upload-sarif@v1
       with:
         sarif_file: snyk.sarif
+
+    - name: Run Dockle and Trivy
+      # Azure Container Scan scans the container with Dockle and Trivy.
+      uses: Azure/container-scan@v0
+      with:
+        image-name: keinos/vscode-dev-container-go-test
+        severity-threshold: CRITICAL
+      env:
+        TRIVY_IGNORE_UNFIXED: true
