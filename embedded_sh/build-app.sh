@@ -15,6 +15,8 @@
 # Name of the CLI app
 NAME_FILE_BIN_DEFAULT="$(basename "$(git rev-parse --show-toplevel)")"
 NAME_FILE_BIN="${NAME_FILE_BIN:-"${NAME_FILE_BIN_DEFAULT}"}"
+# Name of the Docker image to build
+NAME_IMAGE_BUILDER="app-builder"
 
 # Path info to export the app
 PATH_DIR_CURRENT="$(cd . && pwd)"
@@ -228,7 +230,7 @@ Sample Usage:
 
 HEREDOC
 
-    exit "${SUCCESS}"
+    exit "${FAILURE}"
 }
 
 indentSTDIN() {
@@ -278,8 +280,8 @@ listPlatforms() {
 #  Run Only If Not Inside Docker Container
 # -----------------------------------------------------------------------------
 if (! isInsideDocker) && (isInstalled docker); then
-    printf "%s" '- Pulling Docker base image (golang:1.16-alpine) ... '
-    result=$(docker pull golang:1.16-alpine 2>&1) || {
+    printf "%s" '- Pulling Docker base image (golang:latest) ... '
+    result=$(docker pull golang:latest 2>&1) || {
         echo 'NG'
         echo >&2 "${result}"
         exit "${FAILURE}"
@@ -287,15 +289,15 @@ if (! isInsideDocker) && (isInstalled docker); then
     echo 'OK'
 
     printf "%s" '- Building Docker image ... '
-    result=$(docker build --file ./bin/Dockerfile --tag qiitask_builder . 2>&1 3>&1) || {
+    result=$(docker build --file ./bin/Dockerfile --tag "$NAME_IMAGE_BUILDER" . 2>&1 3>&1) || {
         echo 'NG'
         echo >&2 "${result}"
         exit "${FAILURE}"
     }
-    echo 'OK (Image tag: qiitask_builder)'
+    echo "OK (Image tag: ${NAME_IMAGE_BUILDER})"
 
     printf "%s" '- Building app binary in the container ... '
-    result=$(docker run --rm -it -v "$(pwd)":/app qiitask_builder "${@}" 2>&1) || {
+    result=$(docker run --rm -it -v "$(pwd)":/app "$NAME_IMAGE_BUILDER" "${@}" 2>&1) || {
         echo 'NG'
         echo >&2 "${result}"
         exit "${FAILURE}"
@@ -331,11 +333,36 @@ if (echo "$@" | grep '\-all' 1>/dev/null 2>/dev/null) || (echo "$@" | grep '\-a'
     exit "${FAILURE}"
 fi
 
+resultStatus="$SUCCESS"
+
 # à la carte (individual designation)
-buildBinary "${1:-"$GOOS_DEFAULT"}" "${2:-"$GOARCH_DEFAULT"}" "${3:-"$GOARM_DEFAULT"}"
+resultMsg=$(buildBinary "${1:-"$GOOS_DEFAULT"}" "${2:-"$GOARCH_DEFAULT"}" "${3:-"$GOARM_DEFAULT"}" 2>&1) || {
+    msgExtra=''
+
+    # Fix #32
+    echo "$resultMsg" 2>&1 | grep "no Go files in" 2>/dev/null 1>/dev/null && {
+        msgExtra='* Probably not running in main package directory of Go. Check the current path.'
+    }
+    echo "$resultMsg" 2>&1 | grep "cannot find main module" 2>/dev/null 1>/dev/null && {
+        msgExtra='* Probably not running in Go package directory. Check the current path.'
+    }
+
+    # Fix #33
+    echo "$resultMsg" 2>&1 | grep "unsupported GOOS/GOARCH pair" 2>/dev/null 1>/dev/null && {
+        msgExtra='* Probably "linux" is missing.'
+    }
+
+    echo >&2 "$resultMsg"
+    echo >&2
+    echo >&2 "${msgExtra}"
+
+    resultStatus="$FAILURE"
+}
 
 # Change back to original
 cd "$PATH_DIR_RETURN" || {
     echo >&2 "Failed to change directory. Path: ${PATH_DIR_RETURN}"
     exit "${FAILURE}"
 }
+
+exit "${resultStatus}"
