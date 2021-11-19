@@ -27,19 +27,11 @@ if [ ! -r "/.dockerenv" ]; then
     }
     echo "${result}" >"${PATH_FILE_INFO}"
 
-    git add .
-    git status | grep 'modified:' && {
-        git commit -m "Update image info" || {
-            echo >&2 "Error during commit"
-
-            exit 1
-        }
-        git push origin main || {
-            echo >&2 "Error during push"
-
-            exit 1
-        }
-    }
+    if (git diff --shortstat | grep '[0-9]'); then
+        git add .
+        git commit -m "Update image_info.txt via GitHub Actions"
+        git push origin HEAD:${GITHUB_REF}
+    fi
 
     exit 0
 fi
