@@ -6,6 +6,8 @@ pull_request_rules:
       - title~=^Changes
       - files=image_info.txt
       - check-success=analysis
+      - check-success=Snyk Container
+      - check-success=[container-scan] keinos/vscode-dev-container-go-test
     actions:
       merge:
         method: merge
