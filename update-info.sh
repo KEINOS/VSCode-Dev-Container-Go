@@ -30,7 +30,7 @@ if [ ! -r "/.dockerenv" ]; then
     if (git diff --shortstat | grep '[0-9]'); then
         git add .
         git commit -m "Update image_info.txt via GitHub Actions"
-        git push origin HEAD:${GITHUB_REF}
+        git push origin HEAD:"${GITHUB_REF}"
     fi
 
     exit 0

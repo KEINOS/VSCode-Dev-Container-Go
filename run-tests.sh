@@ -22,7 +22,7 @@ SUCCESS=0
 # -----------------------------------------------------------------------------
 
 cdOrExit() {
-    cd ${1} || {
+    cd "${1}" || {
         echo >&2 'NG. Failed to change test directory'
         exit "${FAILURE}"
     }
