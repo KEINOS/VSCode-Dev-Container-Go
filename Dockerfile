@@ -60,10 +60,9 @@ RUN \
     go install "github.com/fatih/gomodifytags@latest" && \
     go install "github.com/josharian/impl@latest" && \
     go install "github.com/haya14busa/goplay/cmd/goplay@latest" && \
-    go install "github.com/go-delve/delve/cmd/dlv@latest" && \
+    go install "github.com/go-delve/delve/cmd/dlv@master" && \
     go install "honnef.co/go/tools/cmd/staticcheck@latest" && \
     go install "golang.org/x/tools/gopls@latest" && \
-    go install "github.com/go-delve/delve/cmd/dlv@latest" && \
     # Packages that KEINOS commonly use
     go install "github.com/msoap/go-carpet@latest" && \
     go install "mvdan.cc/sh/v3/cmd/shfmt@v3.2.1" && \
