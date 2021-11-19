@@ -9,7 +9,7 @@
 #  Constants
 # -----------------------------------------------------------------------------
 
-NAME_IMAGE_DOCKER="test:local"
+NAME_IMAGE_DOCKER="keinos/vscode-dev-container-go-test"
 NAME_SCRIPT_SELF="${0}"
 PATH_DIR_CURRENT="$(cd . && pwd)"
 TRUE=0

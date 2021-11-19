@@ -25,7 +25,7 @@ jobs:
         with:
             persist-credentials: false
 
-      - name: Pull official base image with trust
+      - name: Pull official base image
         run: docker pull golang:alpine
 
       - name: Fetch tags unshallow and prune
