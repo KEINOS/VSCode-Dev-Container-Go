@@ -9,6 +9,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   automated_build:
@@ -80,11 +81,5 @@ jobs:
       - name: Update info
         run: ./update-info.sh ${{ steps.info.outputs.tag_latest }}
 
-      - name: Commit info
-        run: |
-          if (git diff --shortstat | grep '[0-9]'); then
-          echo '* Changes found. Commiting changes ...'
-          git add .
-          git commit -m "Update image_info.txt via GitHub Actions"
-          git push
-          fi
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
