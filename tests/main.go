@@ -1,7 +1,17 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/KEINOS/go-utiles/util"
+)
 
 func main() {
-	fmt.Println("hello world!")
+	util.ExitOnErr(Run())
+}
+
+func Run() error {
+	_, err := fmt.Println("hello world!")
+
+	return err
 }
