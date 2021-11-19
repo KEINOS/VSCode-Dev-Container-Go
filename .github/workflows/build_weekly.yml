@@ -2,8 +2,6 @@ name: Weekly Build
 
 on:
   workflow_dispatch:
-  push:
-    branches: ['main']
   schedule:
     # Runs at 18:00 UTC on Sun (JST: AM 03:00 on every Monday)
     - cron: '0 18 * * SUN'
@@ -76,3 +74,6 @@ jobs:
           build-args: |
             VERSION="${{ steps.info.outputs.ver_long }}"
             TAG_BUILD="(Build: ${{ steps.info.outputs.date }})"
+
+      - name: Update info
+        run: ./update-info.sh
