@@ -76,8 +76,16 @@ jobs:
             TAG_BUILD="(Build: ${{ steps.info.outputs.date }})"
 
       - name: Update info
+        run: ./update-info.sh ${{ steps.info.outputs.tag_latest }}
+
+      - name: Commit info
         run: |
           git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          ./update-info.sh
+          if (git diff --shortstat | grep '[0-9]'); then
+          echo '* Changes found. Commiting changes ...'
+          git add .
+          git commit -m "Update image_info.txt via GitHub Actions"
+          git push
+          fi

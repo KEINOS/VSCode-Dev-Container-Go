@@ -17,21 +17,17 @@ PATH_FILE_SCRIPT='./update-info.sh'
 if [ ! -r "/.dockerenv" ]; then
     set -eu
 
-    docker pull "${NAME_TAG_IMG}"
-
     result=$(docker run --rm -v "$(pwd):/root/mnt" --user root --workdir "/root/mnt" "${NAME_TAG_IMG}" "${PATH_FILE_SCRIPT}" 2>&1) || {
         echo >&2 "${result}"
         echo >&2 "Error during running image"
 
         exit 1
     }
-    echo "${result}" >"${PATH_FILE_INFO}"
+    echo "${result}" >"${PATH_FILE_INFO}" || {
+        echo >&2 "Error during writing file"
 
-    if (git diff --shortstat | grep '[0-9]'); then
-        git add .
-        git commit -m "Update image_info.txt via GitHub Actions"
-        git push origin HEAD:"${GITHUB_REF}"
-    fi
+        exit 1
+    }
 
     exit 0
 fi
