@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+            persist-credentials: false
 
       - name: Pull official base image with trust
         run: docker pull golang:alpine
@@ -80,8 +82,6 @@ jobs:
 
       - name: Commit info
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
           if (git diff --shortstat | grep '[0-9]'); then
           echo '* Changes found. Commiting changes ...'
           git add .
