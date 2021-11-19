@@ -8,8 +8,6 @@ on:
   workflow_dispatch:
   pull_request:
     branches: [ main ]
-  push:
-    branches: [ main ]
   schedule:
     # Runs at 19:00 UTC on Sun (JST: AM 04:00 on every Monday)
     - cron: '0 19 * * SUN'
