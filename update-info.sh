@@ -4,26 +4,18 @@
 #  このスクリプトはローカルで実行してください。
 # =============================================================================
 
-NAME_IMAGE_BASE='golang:latest'
-NAME_TAG_IMG='test:local'
+NAME_TAG_IMG='ghcr.io/keinos/vscode-dev-container-go:latest'
 NAME_FILE_INFO='image_info.txt'
 PATH_FILE_INFO="./${NAME_FILE_INFO}"
 PATH_FILE_SCRIPT='./update-info.sh'
 
 # -----------------------------------------------------------------------------
-#  コンテナをビルドして、コンテナ内でこのファイルを実行し、結果をファイルに保存します。
+#  Latest イメージを Pull して、コンテナ内でこのファイルを実行し、結果をファイル
+#  に保存します。
 # -----------------------------------------------------------------------------
 
 if [ ! -r "/.dockerenv" ]; then
     set -eu
-
-    docker pull "${NAME_IMAGE_BASE}"
-
-    docker build -t "${NAME_TAG_IMG}" . || {
-        echo >&2 "Error during building image"
-
-        exit 1
-    }
 
     result=$(docker run --rm -v "$(pwd):/root/mnt" --user root --workdir "/root/mnt" "${NAME_TAG_IMG}" "${PATH_FILE_SCRIPT}" 2>&1) || {
         echo >&2 "${result}"
@@ -31,7 +23,11 @@ if [ ! -r "/.dockerenv" ]; then
 
         exit 1
     }
-    echo "${result}" >"${PATH_FILE_INFO}"
+    echo "${result}" >"${PATH_FILE_INFO}" || {
+        echo >&2 "Error during writing file"
+
+        exit 1
+    }
 
     exit 0
 fi

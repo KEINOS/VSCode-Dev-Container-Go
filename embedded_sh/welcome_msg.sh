@@ -1,3 +1,4 @@
+# shellcheck shell=bash disable=SC2148
 # -----------------------------------------------------------------------------
 #  Welcome message
 # -----------------------------------------------------------------------------
@@ -14,13 +15,14 @@ cat <<HEREDOC
 - Go    : $(go version | grep -o -E "([0-9]+\.){1}[0-9]+(\.[0-9]+)?" | head -n1)
 - golangci-lint: $(golangci-lint --version | grep -o -E "([0-9]+\.){1}[0-9]+(\.[0-9]+)?" | head -n1)
 - Useful commands
-  - shfmt ........... Lint and formatter for shell script
-  - shellcheck ...... Static analysis for shell script
-  - shellspec ....... Unit test for shell script
-  - golangci-lint ... Overall lint and static analysis for Go script
-  - go-carpet ....... Runs and displays the missing coverage area
-  - gomarkdoc ....... Generates markdown documentation from Go code
-  - alias ........... Shows the list of aliases
+  - shfmt ............ Lint and formatter for shell script
+  - shellcheck ....... Static analysis for shell script
+  - shellspec ........ Unit test for shell script
+  - golangci-lint .... Overall lint and static analysis for Go script
+  - go-carpet ........ Runs and displays the missing coverage area
+  - gomarkdoc ........ Generates markdown documentation from Go code
+  - alias ............ Shows the list of aliases
+  - fieldalignment ... Aligns the fields in a struct
 - Useful aliases
   - build-app ........ Builds a static binary and ZIP archives under the bin directory in the repo
   - list-go-pkg ...... List go installed packages
@@ -29,3 +31,9 @@ cat <<HEREDOC
   - run-shellcheck ... Runs shellcheck with POSIX mode
   - welcome .......... Show this message
 HEREDOC
+
+[ "${WELCOME_ADDITIONAL:+defined}" ] && {
+    echo -e "$WELCOME_ADDITIONAL"
+}
+
+echo "==============================================================================="

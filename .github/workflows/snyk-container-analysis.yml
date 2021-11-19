@@ -9,21 +9,20 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    # Run at AM 04:00 on every Monday
-    - cron:  '0 4 * * MON'
+    # Runs at 19:00 UTC on Sun (JST: AM 04:00 on every Monday)
+    - cron: '0 19 * * SUN'
 
 jobs:
   analysis:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-    - name: Pull official base image with trust
-      run: docker pull golang:alpine
-
-    - name: Build a Docker image
-      run: docker build -t keinos/vscode-dev-container-go-test .
+    - name: Build Docker image
+      run: |
+        docker build -t keinos/vscode-dev-container-go-test .
 
     - name: Run Snyk to check Docker image for vulnerabilities
       # Snyk can be used to break the build when it detects vulnerabilities.
