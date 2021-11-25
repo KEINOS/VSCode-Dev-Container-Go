@@ -128,20 +128,21 @@ function runTests() {
     if [ "$coverage" = "100.0%" ]; then
         echo '  Success! Coverage: 100%'
         return $SUCCESS
-    else
-        # Displays where to cover, if the total coverage wasn't 100%
-        if isModeVerbose; then
-            echo '- Missing Cover Area'
-            runGoCarpet | indentStdIn
-            echo >&2 "  ERROR: Coverage failed. Did not cover 100% of the statements."
-        else
-            echo >&2 "  ERROR: Coverage failed. Did not cover 100% of the statements."
-            echo >&2 "         Use '--verbose' option to see where to cover."
-        fi
-        echo >&2 "         Coverage: ${coverage}"
-
-        exit $FAILURE
     fi
+
+    # Displays where to cover, if the total coverage wasn't 100%
+    if isModeVerbose; then
+        echo '- Missing Cover Area'
+        runGoCarpet | indentStdIn
+        echo >&2 "  ERROR: Coverage failed. Did not cover 100% of the statements."
+    else
+        echo >&2 "  ERROR: Coverage failed. Did not cover 100% of the statements."
+        echo >&2 "         Use '--verbose' option to see where to cover."
+    fi
+
+    echo >&2 "         Coverage: ${coverage}"
+
+    return $FALSE
 }
 
 # -----------------------------------------------------------------------------
@@ -162,9 +163,19 @@ set -o pipefail
 if isModeVerbose; then
     echo '* Running in verbose mode.'
 else
-    echo '* Running in regular mode. Use "-v" or "--verbose" option for verbose output.'
+    echo '* Running in regular modee. Use "-v" or "--verbose" option for verbose output.'
 fi
 
-runGoVet "Scanning all the packages" "./..."
-runTests "Testing all the packages" "./..."
-rm -f "${NAME_FILE_COVERAGE:?'coverage file not set'}"
+result=$SUCCESS
+
+runGoVet "Scanning all the packages" "./..." || {
+    result=$FAILURE
+}
+runTests "Testing all the packages" "./..." || {
+    result=$FAILURE
+}
+rm -f "${NAME_FILE_COVERAGE:?'coverage file not set'}" || {
+    result=$FAILURE
+}
+
+exit $result
