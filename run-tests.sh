@@ -3,7 +3,7 @@
 #  Dev Container Functionality Tests
 # =============================================================================
 #  This script will build the container and builds the sample app (./tests)
-#  inside.
+#  inside. This file will not be included in the released container image.
 
 # -----------------------------------------------------------------------------
 #  Constants
