@@ -1,5 +1,9 @@
 #!/bin/bash
 # =============================================================================
+#  Run this script to update "image_info.txt". This file contains basic info-
+#  rmation about the container image. Such as OS version, Go version, installed
+#  packages, etc.
+#
 #  イメージに含まれているパッケージなどの情報をファイルに出力します。
 #  このスクリプトはローカルで実行してください。
 # =============================================================================
@@ -10,6 +14,8 @@ PATH_FILE_INFO="./${NAME_FILE_INFO}"
 PATH_FILE_SCRIPT='./update-info.sh'
 
 # -----------------------------------------------------------------------------
+#  Pull the latest image and run this script inside the container.
+#
 #  Latest イメージを Pull して、コンテナ内でこのファイルを実行し、結果をファイル
 #  に保存します。
 # -----------------------------------------------------------------------------
@@ -33,6 +39,8 @@ if [ ! -r "/.dockerenv" ]; then
 fi
 
 # -----------------------------------------------------------------------------
+#  Scripts to run inside container.
+#
 #  コンテナ内でこのスクリプトが実行された場合に実行されるコードです。
 # -----------------------------------------------------------------------------
 result=$(shfmt -d "${PATH_FILE_SCRIPT}") || {

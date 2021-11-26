@@ -71,7 +71,9 @@ RUN \
     go install "github.com/nicksnyder/go-i18n/v2/goi18n@latest" && \
     go install "mvdan.cc/gofumpt@latest" && \
     go install "github.com/jessfraz/dockfmt@latest" && \
-    go install "golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest"
+    go install "golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest" && \
+    go install "golang.org/x/lint/golint@latest" && \
+    go install "github.com/goreleaser/goreleaser@latest"
 
 RUN \
     # Install ShellSpec temporary.
@@ -162,18 +164,18 @@ RUN \
     # Alpine addgroup and adduser supports long options. See: https://stackoverflow.com/a/55757473/8367711
     echo 'Adding work user' && \
     addgroup \
-    --system \
-    --gid "$USER_GID" \
-    "$USER_GROUP" && \
+        --system \
+        --gid "$USER_GID" \
+        "$USER_GROUP" && \
     \
     adduser \
-    --system \
-    --home "/home/${USER_NAME}" \
-    --shell /bin/bash \
-    --disabled-password \
-    --ingroup "$USER_GROUP" \
-    --uid "$USER_UID" \
-    "$USER_NAME" && \
+        --system \
+        --home "/home/${USER_NAME}" \
+        --shell /bin/bash \
+        --disabled-password \
+        --ingroup "$USER_GROUP" \
+        --uid "$USER_UID" \
+        "$USER_NAME" && \
     \
     # Fix name for the initial branch
     git config --global init.defaultBranch main && \
@@ -204,24 +206,26 @@ RUN \
     altshfmt -h && \
     dlv version && \
     dockfmt version && \
+    fieldalignment -h && \
     go-carpet --version && \
     go-outline -help && \
     gofumpt --version && \
     goi18n extract --help && \
     golangci-lint --version && \
+    golint --help && \
     gomarkdoc --version && \
     gomodifytags -help && \
     gopkgs -h && \
     goplay -h 2>&1 | grep SYNOPSIS && \
     gopls version && \
+    goreleaser -v && \
     gotests -h && \
     gp help && \
     impl -h && \
     shellcheck --version && \
     shellspec --version && \
     shfmt --version && \
-    staticcheck --version && \
-    fieldalignment -h
+    staticcheck --version
 
 USER vscode
 
