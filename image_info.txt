@@ -23,11 +23,13 @@ go-outline
 gofumpt
 goi18n
 golangci-lint
+golint
 gomarkdoc
 gomodifytags
 gopkgs
 goplay
 gopls
+goreleaser
 gotests
 gp
 impl
