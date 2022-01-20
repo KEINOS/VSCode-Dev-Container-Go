@@ -202,9 +202,13 @@ RUN \
     # Fix DKL-LI-0003: Only put necessary files (Related issue #38)
     rm -rf /usr/local/go/src/crypto/elliptic/internal/fiat/Dockerfile && \
     \
+    # Fix Issue #63: add dlv-dap
+    ln -s /go/bin/dlv /go/bin/dlv-dap && \
+    \
     # Smoke tests for installed Go packages as a command
     altshfmt -h && \
     dlv version && \
+    dlv-dap version && \
     dockfmt version && \
     fieldalignment -h && \
     go-carpet --version && \
