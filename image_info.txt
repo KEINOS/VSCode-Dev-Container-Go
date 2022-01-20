@@ -16,6 +16,7 @@ go version go1.17.6 linux/amd64
 ===============================================================================
 altshfmt
 dlv
+dlv-dap
 dockfmt
 fieldalignment
 go-carpet
