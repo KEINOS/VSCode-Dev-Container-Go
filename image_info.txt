@@ -3,10 +3,10 @@
 ===============================================================================
 NAME="Alpine Linux"
 ID=alpine
-VERSION_ID=3.15.4
-PRETTY_NAME="Alpine Linux v3.15"
+VERSION_ID=3.16.0
+PRETTY_NAME="Alpine Linux v3.16"
 HOME_URL="https://alpinelinux.org/"
-BUG_REPORT_URL="https://bugs.alpinelinux.org/"
+BUG_REPORT_URL="https://gitlab.alpinelinux.org/alpine/aports/-/issues"
 ===============================================================================
  Program Lang Info
 ===============================================================================
@@ -43,6 +43,7 @@ staticcheck
 ===============================================================================
 abuild
 alpine-baselayout
+alpine-baselayout-data
 alpine-keys
 alpine-sdk
 apk-tools
@@ -74,9 +75,7 @@ libcrypto1.1
 libcurl
 libgcc
 libgomp
-libgphobos
 libmagic
-libretls
 libssl1.1
 libstdc++
 lzip
