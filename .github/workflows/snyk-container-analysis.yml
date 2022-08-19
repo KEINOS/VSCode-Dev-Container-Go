@@ -1,53 +1,43 @@
 # Container analysis using Snyk.
 # This workflow checks out the code, builds a container image using Docker and
 # scans that image for vulnerabilities using Snyk.
-
-name: Container Analysis
+name: Snyk Scan
 
 on:
   workflow_dispatch:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   schedule:
     # Runs at 19:00 UTC on Sun (JST: AM 04:00 on every Monday)
-    - cron: '0 19 * * SUN'
+    - cron: "0 19 * * SUN"
 
 jobs:
   analysis:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Build Docker image
-      run: |
-        docker build -t keinos/vscode-dev-container-go-test .
+      - name: Build Docker image
+        run: |
+          docker build -t keinos/vscode-dev-container-go-test .
 
-    - name: Run Snyk to check Docker image for vulnerabilities
-      # Snyk can be used to break the build when it detects vulnerabilities.
-      # In this case we want to upload the issues to GitHub Code Scanning
-      continue-on-error: true
-      uses: snyk/actions/docker@master
-      env:
-        # In order to use the Snyk Action you will need to have a Snyk API token.
-        # More details in https://github.com/snyk/actions#getting-your-snyk-token
-        # or you can signup for free at https://snyk.io/login
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        image: keinos/vscode-dev-container-go-test
-        args: --file=Dockerfile
+      - name: Run Snyk to check Docker image for vulnerabilities
+        # Snyk can be used to break the build when it detects vulnerabilities.
+        # In this case we want to upload the issues to GitHub Code Scanning
+        continue-on-error: true
+        uses: snyk/actions/docker@master
+        env:
+          # In order to use the Snyk Action you will need to have a Snyk API token.
+          # More details in https://github.com/snyk/actions#getting-your-snyk-token
+          # or you can signup for free at https://snyk.io/login
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: keinos/vscode-dev-container-go-test
+          args: --file=Dockerfile
 
-    - name: Upload Snyk's scan result to GitHub Code Scanning
-      uses: github/codeql-action/upload-sarif@v1
-      with:
-        sarif_file: snyk.sarif
-
-    - name: Run Dockle and Trivy
-      # Azure Container Scan scans the container with Dockle and Trivy.
-      uses: Azure/container-scan@v0
-      with:
-        image-name: keinos/vscode-dev-container-go-test
-        severity-threshold: CRITICAL
-      env:
-        TRIVY_IGNORE_UNFIXED: true
+      - name: Upload Snyk's scan result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: snyk.sarif
