@@ -12,7 +12,7 @@ on:
     - cron: "0 19 * * SUN"
 
 jobs:
-  analysis:
+  snykscan:
     runs-on: ubuntu-latest
 
     steps:

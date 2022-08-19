@@ -12,7 +12,7 @@ on:
     - cron: "20 19 * * SUN"
 
 jobs:
-  analysis:
+  azurescan:
     runs-on: ubuntu-latest
 
     steps:

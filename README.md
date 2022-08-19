@@ -1,5 +1,6 @@
 [![Build on schedule/push](https://github.com/KEINOS/VSCode-Dev-Container-Go/actions/workflows/build_weekly.yml/badge.svg)](https://github.com/KEINOS/VSCode-Dev-Container-Go/actions/workflows/build_weekly.yml)
-[![Snyk Container](https://github.com/KEINOS/VSCode-Dev-Container-Go/actions/workflows/snyk-container-analysis.yml/badge.svg)](https://github.com/KEINOS/VSCode-Dev-Container-Go/actions/workflows/snyk-container-analysis.yml)
+[![Azure Scan](https://github.com/KEINOS/VSCode-Dev-Container-Go/actions/workflows/azure-container-scan.yml/badge.svg)](https://github.com/KEINOS/VSCode-Dev-Container-Go/actions/workflows/azure-container-scan.yml)
+[![Snyk Scan](https://github.com/KEINOS/VSCode-Dev-Container-Go/actions/workflows/snyk-container-analysis.yml/badge.svg?branch=main)](https://github.com/KEINOS/VSCode-Dev-Container-Go/actions/workflows/snyk-container-analysis.yml)
 
 # VSCode's DevContainer Image for Go
 
