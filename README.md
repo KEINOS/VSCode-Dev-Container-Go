@@ -4,7 +4,7 @@
 
 # VSCode's DevContainer Image for Go
 
-VSCode の Remote-Containers（`.devcontainer`）で Go 言語（Golang）開発をするための Docker コンテナに使うベース・イメージです。
+VSCode の Remote-Containers（`.devcontainer`）で Go 言語（Golang）開発をするための Docker コンテナに使う Alpine Linux ベースのイメージです。
 
 ```bash
 docker pull ghcr.io/keinos/vscode-dev-container-go:latest
